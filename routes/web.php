@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,6 @@ Route::get('/about', function () {
         "email" => "lala@gmail.com"
     ]);
 });
+
+
+Route::get('/boom', [PostController::class, 'boomesport']);
