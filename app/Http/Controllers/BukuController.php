@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\buku;
 
-class PostController extends Controller
+class BukuController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -12,6 +13,8 @@ class PostController extends Controller
     public function index()
     {
         //
+        $data_buku = Buku::all();
+        return view('buku.index', compact('data_buku'));
     }
 
     /**
@@ -60,9 +63,5 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
-    }
-
-    public function boomesport(){
-        return view('boom');
     }
 }
