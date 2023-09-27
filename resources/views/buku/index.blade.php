@@ -26,14 +26,29 @@
         <tbody>
             @foreach($data_buku as $buku)
             <tr>
-                <td>{{ $buku->id }}</td>
+                <td>{{ ++$no }}</td>
                 <td>{{ $buku->judul }}</td>
                 <td>{{ $buku->penulis }}</td>
                 <td>{{ "Rp ".number_format($buku->harga, 2, ',', '.') }}</td>
                 <td>{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('d/M/Y')}}</td>
+                <td><form action="{{ route('buku.destroy', $buku->id) }}" method="post">
+                    @csrf
+                    <button onclick="return confirm('Yakin mau dihapus?')">Hapus</button>
+                </form></td>
+                <td><form action="{{ route('buku.edit', $buku->id) }}" method="get">
+                    @csrf
+                    <button>Edit</button>
+                </form></td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
+    <p>{{ "jumlah data : ".$jumlah }}</p>
+    <p>{{ "total harga : "."Rp ".number_format($total_harga, 2, ',', '.')}}</p>
+
+
+    <p align="right"><a href="{{ route('buku.create') }}">Tambah Buku</a></p>
+    
 </body>
 </html>
