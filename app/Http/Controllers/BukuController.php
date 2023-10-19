@@ -20,6 +20,18 @@ class BukuController extends Controller
         return view('buku.index', compact('data_buku', 'no', 'jumlah', 'total_harga'));
     }
 
+    public function search(Request $request)
+    {
+        $batas = 5;
+        $cari = $request->kata;
+        $data_buku = Buku::where('judul','LIKE', '%'.$cari.'%')->orwhere('penulis','LIKE', '%'.$cari.'%')
+            -> paginate($batas);
+        $jumlah = $data_buku->count();
+        $no = $batas * ($data_buku->currentPage()-1);
+        $total_harga = $data_buku->sum('harga');
+        return view('buku.search', compact('jumlah','data_buku','no','cari','total_harga'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -32,13 +44,20 @@ class BukuController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'judul'     => 'required|string',
+            'penulis'   => 'required|string',
+            'harga'     => 'required|numeric',
+            'tgl_terbit'=> 'required|date  '
+        ]);
         Buku::create([
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'harga' => $request->harga,
             'tgl_terbit' => $request->tgl_terbit,
         ]);
-        return redirect('/buku');
+        
+        return redirect('/buku')->with('pesan_simpan', 'Data buku berhasil disimpan');
     }
 
     /**
@@ -71,7 +90,7 @@ class BukuController extends Controller
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
         $buku->save();
-        return redirect('/buku');
+        return redirect('/buku')->with('pesan_update', 'Data buku berhasil diperbarui');
     }
 
     /**
@@ -81,6 +100,6 @@ class BukuController extends Controller
     {
         $buku = Buku::find($id);
         $buku->delete();
-        return redirect('/buku');
+        return redirect('/buku')->with('pesan_hapus', 'Data buku berhasil dihapus');
     }
 }
