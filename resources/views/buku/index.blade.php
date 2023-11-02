@@ -34,7 +34,9 @@
                 <th>Penulis</th>
                 <th>Harga</th>
                 <th>Tgl. terbit</th>
+                @if(Auth::check() && Auth::user()->level == 'admin')
                 <th>Aksi</th>
+                @endif
             </tr>
         </thead>
 
@@ -46,6 +48,7 @@
                 <td>{{ $buku->penulis }}</td>
                 <td>{{ "Rp ".number_format($buku->harga, 2, ',', '.') }}</td>
                 <td>{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('d/M/Y')}}</td>
+                @if(Auth::check() && Auth::user()->level == 'admin')
                 <td><form action="{{ route('buku.destroy', $buku->id) }}" method="post">
                     @csrf
                     <button onclick="return confirm('Yakin mau dihapus?')">Hapus</button>
@@ -54,6 +57,7 @@
                     @csrf
                     <button>Edit</button>
                 </form></td>
+                @endif
             </tr>
             @endforeach
         </tbody>
@@ -62,8 +66,9 @@
     <p>{{ "jumlah data : ".$jumlah }}</p>
     <p>{{ "total harga : "."Rp ".number_format($total_harga, 2, ',', '.')}}</p>
 
-
+    @if(Auth::check() && Auth::user()->level == 'admin')
     <p align="right"><a href="{{ route('buku.create') }}">Tambah Buku</a></p>
+    @endif
     
 </body>
 </html>
