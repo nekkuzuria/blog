@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\buku;
+use Intervention\Image\Facades\Image;
 
 class BukuController extends Controller
 {
@@ -88,11 +89,26 @@ class BukuController extends Controller
     {
         //
         $buku = Buku::find($id);
-        $buku->judul = $request->judul;
-        $buku->penulis = $request->penulis;
-        $buku->harga = $request->harga;
-        $buku->tgl_terbit = $request->tgl_terbit;
-        $buku->save();
+
+        $request -> validate([
+            'thumbnail' => 'image|mimes:jpeg,jpg,png|max:2048'
+        ]);
+
+        $fileName = time().'_'.$request->thumbnail->getClientOriginalName();
+        $filePath = $request->thumbnail->storeAs('uploads', $fileName, 'public');
+        
+        Image::make(storage_path().'/app/public/uploads/'.$fileName)->fit(240,320)->save();
+
+        $buku->update([
+            'judul'=> $request->judul,
+            'penulis'=> $request->penulis,
+            'harga'=> $request->harga,
+            'tgl_terbit'=> $request->tgl_terbit,
+            'filename' => $fileName,
+            'filepath' => '/storage/' . $filePath 
+        ]);
+
+    
         return redirect('/buku')->with('pesan_update', 'Data buku berhasil diperbarui');
     }
 
