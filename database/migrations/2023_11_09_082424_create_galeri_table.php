@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('galeri', function (Blueprint $table) {
             $table->id();
             $table->string('nama_galeri');
+            $table->string('path');
             $table->string('galeri_seo');
             $table->text('keterangan');
             $table->string('foto');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\buku;
 use Intervention\Image\Facades\Image;
+use App\Models\Gallery;
 
 class BukuController extends Controller
 {
@@ -85,32 +86,61 @@ class BukuController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(Request $request, string $id){
+    // Find the book by ID
         $buku = Buku::find($id);
 
-        $request -> validate([
-            'thumbnail' => 'image|mimes:jpeg,jpg,png|max:2048'
+        // Validate the request
+        $request->validate([
+            'thumbnail' => 'image|mimes:jpeg,jpg,png|max:2048',
         ]);
 
-        $fileName = time().'_'.$request->thumbnail->getClientOriginalName();
-        $filePath = $request->thumbnail->storeAs('uploads', $fileName, 'public');
-        
-        Image::make(storage_path().'/app/public/uploads/'.$fileName)->fit(240,320)->save();
+        // Initialize variables
+        $fileName = $buku->filename;  // Use the existing filename initially
+        $filePath = $buku->filepath;  // Use the existing filepath initially
 
+        // Process Thumbnail if exists
+        if ($request->hasFile('thumbnail')) {
+            $fileName = time() . '_' . $request->file('thumbnail')->getClientOriginalName();
+            $filePath = $request->file('thumbnail')->storeAs('uploads', $fileName, 'public');
+        }
+
+        if ($fileName !== null) {
+            Image::make(storage_path().'/app/public/uploads/'.$fileName)
+                ->fit(240, 320)
+                ->save();
+        }
+
+        // Process Gallery if exists
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $file) {
+                $galleryFileName = time() . '_' . $file->getClientOriginalName();
+                $filePathGallery = $file->storeAs('uploads', $galleryFileName, 'public');
+
+                // Create Gallery entry
+                Gallery::create([
+                    'nama_galeri' => $galleryFileName,
+                    'path' => '/storage/' . $filePathGallery,
+                    'foto' => $galleryFileName,
+                    'buku_id' => $id,
+                ]);
+            }
+        }
+
+        // Update the rest of the book details
         $buku->update([
-            'judul'=> $request->judul,
-            'penulis'=> $request->penulis,
-            'harga'=> $request->harga,
-            'tgl_terbit'=> $request->tgl_terbit,
-            'filename' => $fileName,
-            'filepath' => '/storage/' . $filePath 
+            'judul' => $request->judul,
+            'penulis' => $request->penulis,
+            'harga' => $request->harga,
+            'tgl_terbit' => $request->tgl_terbit,
+            'filename' => $fileName,  // Only update if thumbnail is updated
+            'filepath' => '/storage/' . $filePath,  // Only update if thumbnail is updated
         ]);
 
-    
+        // Redirect with success message
         return redirect('/buku')->with('pesan_update', 'Data buku berhasil diperbarui');
     }
+
 
     /**
      * Remove the specified resource from storage.
