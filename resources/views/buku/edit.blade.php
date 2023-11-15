@@ -11,6 +11,17 @@
 
 <div class="container mx-auto p-4">
     <h4 class="text-center text-2xl font-bold mb-4">Edit Buku</h4>
+    @if(count($errors) > 0)
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Terjadi kesalahan!</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data" id="uploadForm">
         @csrf
         <div class="mb-4">

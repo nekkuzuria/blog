@@ -53,14 +53,45 @@ class BukuController extends Controller
             'judul'     => 'required|string',
             'penulis'   => 'required|string',
             'harga'     => 'required|numeric',
-            'tgl_terbit'=> 'required|date  '
+            'tgl_terbit'=> 'required|date',
+            'thumbnail' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'gallery.*' => 'image|mimes:jpeg,jpg,png|max:2048'
         ]);
-        Buku::create([
+
+        $buku = Buku::create([
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'harga' => $request->harga,
             'tgl_terbit' => $request->tgl_terbit,
         ]);
+
+        // Simpan thumbnail
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailFileName = time() . '_' . $request->thumbnail->getClientOriginalName();
+            $thumbnailFilePath = $request->thumbnail->storeAs('uploads', $thumbnailFileName, 'public');
+            
+            Image::make(storage_path() . '/app/public/uploads/' . $thumbnailFileName)->fit(240, 320)->save();
+
+            $buku->update([
+                'filename' => $thumbnailFileName,
+                'filepath' => '/storage/' . $thumbnailFilePath 
+            ]);
+        }
+
+        // Simpan galeri
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $key => $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePathGallery = $file->storeAs('uploads', $fileName, 'public');
+
+                $gallery = Gallery::create([
+                    'nama_galeri' => $fileName,
+                    'path' => '/storage/' . $filePathGallery,
+                    'foto' => $fileName,
+                    'buku_id' => $buku->id,
+                ]);
+            }
+        }
         
         return redirect('/buku')->with('pesan_simpan', 'Data buku berhasil disimpan');
     }
