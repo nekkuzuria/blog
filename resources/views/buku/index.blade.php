@@ -30,6 +30,7 @@
         <thead>
             <tr>
                 <th>id</th>
+                <th>Gambar</th>
                 <th>Judul Buku</th>
                 <th>Penulis</th>
                 <th>Harga</th>
