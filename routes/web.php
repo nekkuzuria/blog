@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
     Route::get('/dashboard', function () {return redirect()->route('buku.index');})->name('dashboard');
     Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
+    Route::get('/buku/detail-buku/{id}', [BukuController::class, 'galBuku'])->name('galeri.buku');
 
     Route::middleware([Admin::class])->group(function () {
         Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');

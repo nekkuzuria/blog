@@ -54,7 +54,8 @@
                 <div class="mb-4">
                     <label for="file_upload" class="text-gray-900">Gallery</label>
                     <div class="mt-2" id="fileinput_wrapper"></div>
-                    <button class="bg-blue-500 text-white rounded-md py-2 px-4 mx-3 my-2 hover:opacity-70" type="button" onclick="addFileInput()">Tambah</button>
+                    <button class="bg-blue-500 text-white rounded-md py-2 px-4 mx-3 my-2 hover:opacity-70" 
+                    type="button" onclick="addFileInput()">Tambah</button>
                 </div>
 
                 <div class="flex flex-row space-x-4">

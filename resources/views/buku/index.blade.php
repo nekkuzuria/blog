@@ -57,7 +57,7 @@
                     </div>
                     
                 </td>
-                <td>{{ $buku->judul }}</td>
+                <td><a href="{{ route('galeri.buku', $buku->id) }}">{{ $buku->judul }}</a></td>
                 <td>{{ $buku->penulis }}</td>
                 <td>{{ "Rp ".number_format($buku->harga, 2, ',', '.') }}</td>
                 <td>{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('d/M/Y')}}</td>
