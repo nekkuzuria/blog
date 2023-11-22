@@ -52,6 +52,12 @@
             <div class="mb-4">
                 <label for="thumbnail" class="text-gray-900">Thumbnail</label>
                 <!-- You might display thumbnail here -->
+                 <div class="flex flex-row space-x-4">
+                    <div class="relative group">
+                        <a href="{{ asset($buku->filepath) }}" data-lightbox="image-1">
+                            <img class="rounded-sm object-cover object-center" src="{{ asset($buku->filepath) }}" alt="" width="200"/>
+                        </a>                        
+                    </div>
             </div>
             <div class="mb-4">
                 <label for="file_upload" class="text-gray-900">Gallery</label>
