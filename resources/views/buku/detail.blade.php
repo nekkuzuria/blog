@@ -16,6 +16,30 @@
             width: fit-content;
             border-radius: 4px;
         }
+        /* Hide the radio buttons */
+        .rating input[type="radio"] {
+            display: none;
+        }
+
+        /* Style the stars */
+        .rating label {
+            font-size: 30px;
+            color: grey; /* default star color */
+            cursor: pointer;
+        }
+
+        /* Color the stars based on checked state */
+        .rating input[type="radio"]:checked ~ label {
+            color: gold; /* change star color when checked */
+        }
+        .rating {
+            direction: rtl;
+        }
+
+        .rating label {
+            float: right;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100">
@@ -36,7 +60,37 @@
             <div class="mb-4">
                 <label for="judul" class="text-gray-900">Judul</label>
                 <label for="judul" class="custom-label">{{ $buku->judul }}</label>
-            </div>
+
+                @if($averageRating !== null)
+                    <!-- Tampilkan rata-rata rating jika tersedia -->
+                    <p>Rating: {{ $averageRating }}</p>
+                @else
+                    <!-- Tampilkan pesan bahwa rating tidak tersedia -->
+                    <p>Rating is not available</p>
+                @endif
+            
+            <form action="{{ route('updateRating', ['id' => $buku->id]) }}" method="post" class="flex items-center">
+                @csrf <!-- Token CSRF untuk keamanan Laravel -->
+
+                <div class="flex space-x-1">
+                    <input type="radio" id="star5" name = "rating" class="rating" value="5">
+                    <label for="star5">&#9733;</label>
+                    <input type="radio" id="star4" class="rating" name = "rating" value="4">
+                    <label for="star4">&#9733;</label>
+                <input type="radio" id="star3" class="rating" name = "rating" value="3">
+                    <label for="star3">&#9733;</label>
+                    <input type="radio" id="star2" class="rating" name = "rating" value="2">
+                    <label for="star2">&#9733;</label>
+                    <input type="radio" id="star1" class="rating" name = "rating" value="1">
+                    <label for="star1">&#9733;</label>
+                </div>
+
+                <!-- Tombol untuk menyimpan rating -->
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">
+                    Simpan Rating
+                </button>
+            </form>
+
             <div class="mb-4">
                 <label for="penulis" class="text-gray-900">Penulis</label>
                 <label for="penulis" class="custom-label">{{ $buku->penulis }}</label>
@@ -48,6 +102,15 @@
             <div class="mb-4">
                 <label for="tgl_terbit" class="text-gray-900">Tgl. terbit</label>
                 <label for="tgl_terbit" class="custom-label">{{ $buku->tgl_terbit }}</label>
+            </div>
+            <div class="mb-4">
+                <form action="/buku/{{ $buku->id }}/add-to-favorites" method="post">
+                    @csrf <!-- Token CSRF untuk keamanan Laravel -->
+
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Simpan ke Daftar Favorit
+                    </button>
+                </form>
             </div>
             <div class="mb-4">
                 <label for="thumbnail" class="text-gray-900">Thumbnail</label>
@@ -75,5 +138,38 @@
         </form>
     </div>
     <script src="{{ asset('dist/js/lightbox-plus-jquery.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('.rating input[type="radio"]').on('click', function() {
+            let rating = $(this).val(); // Mendapatkan nilai rating dari elemen yang diklik
+            let bookId = '{{ $buku->id }}'; // Mendapatkan ID buku dari data yang diberikan di controller
+
+            // Lakukan AJAX request ke endpoint untuk memperbarui rating
+            $.ajax({
+                type: 'POST',
+                url: '/buku/detail-buku/' + bookId + '/update-rating',
+                data: {
+                    rating: rating,
+                    _token: '{{ csrf_token() }}' // Token CSRF untuk keamanan Laravel
+                },
+                success: function(response) {
+                    console.log('Rating berhasil diperbarui');
+                    // Lakukan sesuatu jika rating berhasil diperbarui
+                },
+                error: function(err) {
+                    console.error('Gagal memperbarui rating');
+                    // Tangani kesalahan jika gagal memperbarui rating
+                }
+            });
+        });
+    });
+</script>
+
+
+
+            
 </body>
 </html>
+
+

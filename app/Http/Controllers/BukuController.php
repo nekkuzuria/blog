@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\buku;
 use Intervention\Image\Facades\Image;
 use App\Models\Gallery;
+use App\Models\Rating;
+use App\Models\Favorit;
+use Illuminate\Support\Facades\Auth;
 
 class BukuController extends Controller
 {
@@ -194,6 +197,65 @@ class BukuController extends Controller
      public function galBuku($id)
     {
         $buku = Buku::find($id);
-        return view('buku.detail', compact('buku'));
+        $averageRating = Rating::where('book_id', $id)
+            ->avg('rating');
+
+        // Mengembalikan tampilan bersama dengan rata-rata rating yang baru
+        return view('buku.detail', compact('buku', 'averageRating'));  
+    }   
+
+    public function updateRating(Request $request, $id)
+    {
+        $userId = Auth::id(); // Mendapatkan user_id dari pengguna yang sedang masuk
+        $bookId = $id;
+        $request->validate([
+            'rating' => 'required|numeric|min:1|max:5', // Sesuaikan aturan validasi sesuai kebutuhan Anda
+        ]);
+
+        // Buat atau perbarui rating pada buku yang dipilih oleh pengguna
+        Rating::create([
+            'user_id' => $userId, 
+            'book_id' => $bookId,
+            'rating' => $request->input('rating')
+        ]);
+
+        // Ambil rata-rata rating baru untuk buku tertentu
+        $averageRating = Rating::where('book_id', $bookId)
+            ->avg('rating');
+
+        // Mengembalikan tampilan bersama dengan rata-rata rating yang baru
+        return view('buku.detail', compact('buku', 'averageRating'));  
+    }
+
+    public function showFavoriteBooks()
+    {
+        // Ambil daftar buku favorit dari pengguna yang sedang login
+        $favoriteBooks = auth()->user()->favouriteBooks;
+
+        return view('buku.favorite', compact('favoriteBooks'));
+    }
+
+    public function addToFavorites(Request $request, $id)
+    {
+        // Dapatkan user ID dari pengguna yang sedang login
+        $userId = Auth::id();
+
+        // Cek apakah buku sudah ada dalam daftar favorit pengguna
+        $isFavorite = Favorit::where('user_id', $userId)
+                             ->where('book_id', $id)
+                             ->exists();
+
+        if ($isFavorite) {
+            return redirect()->route('galeri.buku', $id)->with('error', 'Buku sudah ada dalam daftar favorit.');
+        }
+
+        // Tambahkan buku ke daftar favorit pengguna
+        Favorit::create([
+            'user_id' => $userId,
+            'book_id' => $id
+        ]);
+
+        return redirect()->route('galeri.buku', $id)->with('success', 'Buku berhasil ditambahkan ke daftar favorit.');
     }
 }
+

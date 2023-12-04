@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {return redirect()->route('buku.index');})->name('dashboard');
     Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
     Route::get('/buku/detail-buku/{id}', [BukuController::class, 'galBuku'])->name('galeri.buku');
+    Route::post('/buku/detail-buku/{id}/update-rating', [BukuController::class, 'updateRating'])->name('updateRating');
+    Route::get('/buku/myfavourite', [BukuController::class, 'showFavoriteBooks'])->name('favorite');
+    Route::post('/buku/{id}/add-to-favorites', [BukuController::class, 'addToFavorites'])->name('addToFavorites');
+
 
     Route::middleware([Admin::class])->group(function () {
         Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');

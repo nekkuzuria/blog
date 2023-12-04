@@ -21,4 +21,9 @@ class buku extends Model
     public function photos(){
         return $this->hasMany('App\Buku', 'id_buku', 'id');    
     }
+
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'book_id', 'user_id');
+    }
 }
