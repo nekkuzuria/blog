@@ -228,15 +228,7 @@ class BukuController extends Controller
             'rating' => $request->rating
         ]);
         }
-        // Buat atau perbarui rating pada buku yang dipilih oleh pengguna
-        
 
-        // Ambil rata-rata rating baru untuk buku tertentu
-        $averageRating = Rating::where('book_id', $bookId)
-            ->avg('rating');
-
-        // Mengembalikan tampilan bersama dengan rata-rata rating yang baru
-        // return view('buku.detail', compact('bookId', 'averageRating'));  
         return redirect()->route('galeri.buku', $bookId);
     }
 
