@@ -55,8 +55,8 @@
                 </ul>
             </div>
         @endif
-        <form>
-            @csrf
+     
+            
             <div class="mb-4">
                 <label for="judul" class="text-gray-900">Judul</label>
                 <label for="judul" class="custom-label">{{ $buku->judul }}</label>
@@ -69,19 +69,19 @@
                     <p>Rating is not available</p>
                 @endif
             
-            <form action="{{ route('updateRating', ['id' => $buku->id]) }}" method="post" class="flex items-center">
-                @csrf <!-- Token CSRF untuk keamanan Laravel -->
-
-                <div class="flex space-x-1">
-                    <input type="radio" id="star5" name = "rating" class="rating" value="5">
-                    <label for="star5">&#9733;</label>
-                    <input type="radio" id="star4" class="rating" name = "rating" value="4">
-                    <label for="star4">&#9733;</label>
-                <input type="radio" id="star3" class="rating" name = "rating" value="3">
-                    <label for="star3">&#9733;</label>
-                    <input type="radio" id="star2" class="rating" name = "rating" value="2">
-                    <label for="star2">&#9733;</label>
+            @if(Auth::check() && Auth::user()->level == 'user')
+            <form action="{{ route('updateRating', $buku->id) }}" method="POST" class="flex items-center">
+                @csrf
+                <div class="flex space-x-1 rating">
                     <input type="radio" id="star1" class="rating" name = "rating" value="1">
+                    <label for="star5">&#9733;</label>
+                    <input type="radio" id="star2" class="rating" name = "rating" value="2">
+                    <label for="star4">&#9733;</label>
+                    <input type="radio" id="star3" class="rating" name = "rating" value="3">
+                    <label for="star3">&#9733;</label>
+                    <input type="radio" id="star4" class="rating" name = "rating" value="4">
+                    <label for="star2">&#9733;</label>
+                    <input type="radio" id="star5" class="rating" name = "rating" value="5">
                     <label for="star1">&#9733;</label>
                 </div>
 
@@ -90,6 +90,7 @@
                     Simpan Rating
                 </button>
             </form>
+            @endif
 
             <div class="mb-4">
                 <label for="penulis" class="text-gray-900">Penulis</label>
@@ -103,6 +104,7 @@
                 <label for="tgl_terbit" class="text-gray-900">Tgl. terbit</label>
                 <label for="tgl_terbit" class="custom-label">{{ $buku->tgl_terbit }}</label>
             </div>
+            @if(Auth::check() && Auth::user()->level == 'user')
             <div class="mb-4">
                 <form action="/buku/{{ $buku->id }}/add-to-favorites" method="post">
                     @csrf <!-- Token CSRF untuk keamanan Laravel -->
@@ -112,6 +114,7 @@
                     </button>
                 </form>
             </div>
+            @endif
             <div class="mb-4">
                 <label for="thumbnail" class="text-gray-900">Thumbnail</label>
                 <!-- You might display thumbnail here -->

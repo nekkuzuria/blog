@@ -116,6 +116,7 @@ class BukuController extends Controller
         $buku = Buku::find($id);
         return view('buku.edit', compact('buku'));
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -212,19 +213,31 @@ class BukuController extends Controller
             'rating' => 'required|numeric|min:1|max:5', // Sesuaikan aturan validasi sesuai kebutuhan Anda
         ]);
 
-        // Buat atau perbarui rating pada buku yang dipilih oleh pengguna
-        Rating::create([
+        $rating = Rating::where('user_id', $userId)
+                             ->where('book_id', $bookId)
+                             ->first();
+
+        if($rating){
+            $rating->rating = $request->rating;
+            $rating->save();
+        }
+        else{
+            Rating::create([
             'user_id' => $userId, 
             'book_id' => $bookId,
-            'rating' => $request->input('rating')
+            'rating' => $request->rating
         ]);
+        }
+        // Buat atau perbarui rating pada buku yang dipilih oleh pengguna
+        
 
         // Ambil rata-rata rating baru untuk buku tertentu
         $averageRating = Rating::where('book_id', $bookId)
             ->avg('rating');
 
         // Mengembalikan tampilan bersama dengan rata-rata rating yang baru
-        return view('buku.detail', compact('buku', 'averageRating'));  
+        // return view('buku.detail', compact('bookId', 'averageRating'));  
+        return redirect()->route('galeri.buku', $bookId);
     }
 
     public function showFavoriteBooks()
@@ -235,7 +248,7 @@ class BukuController extends Controller
         return view('buku.favorite', compact('favoriteBooks'));
     }
 
-    public function addToFavorites(Request $request, $id)
+    public function addToFavorites($id)
     {
         // Dapatkan user ID dari pengguna yang sedang login
         $userId = Auth::id();

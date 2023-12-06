@@ -15,9 +15,11 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if(Auth::check() && Auth::user()->level == 'user')
                     <x-nav-link :href="route('favorite')" :active="request()->routeIs('favorite')">
-                        {{ __('Favorit Saya') }}
+                        {{ __('Buku Favoritku') }}
                     </x-nav-link>
+                    @endif
                 </div>
             </div>
 
