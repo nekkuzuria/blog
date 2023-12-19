@@ -17,15 +17,13 @@
                     </x-nav-link>
                     @if(Auth::check() && Auth::user()->level == 'user')
                     <x-nav-link :href="route('favorite')" :active="request()->routeIs('favorite')">
-                        {{ __('Buku Favoritku') }}
+                    {{ __('Buku Favoritku') }}
                     </x-nav-link>
                     @endif
                     <x-nav-link :href="route('bukuPopuler')" :active="request()->routeIs('bukuPopuler')">
                         {{ __('Buku Populer') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('bukuPopuler')" :active="request()->routeIs('bukuPopuler')">
-                        {{ __('Kategori Buku') }}
-                    </x-nav-link>
+                    
                 </div>
             </div>
 

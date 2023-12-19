@@ -303,6 +303,13 @@ class BukuController extends Controller
     return view('buku.populer', compact('books'));
 }
 
+ public function kategori()
+    {
+
+
+        // Contoh penggunaan view:
+        return view('buku.kategori'); // Sesuaikan dengan nama view yang sesuai
+    }
 
 }
 
