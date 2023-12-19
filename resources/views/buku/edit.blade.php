@@ -46,6 +46,21 @@
                     <label for="tgl_terbit" class="text-gray-900">Tgl. terbit</label>
                     <input type="text" class="w-full mt-1 px-2 py-2 rounded-lg border" name="tgl_terbit" id="tgl_terbit" value="{{ $buku->tgl_terbit }}">
                 </div>
+                <form action="{{ route('buku.update', $buku->id) }}" method="POST" id="kategoriForm" class="p-4">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="kategori" class="block text-gray-700 text-sm font-bold mb-2">Kategori 1</label>
+                        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="kategori[]" placeholder="Kategori 1">
+                    </div>
+
+                    <!-- Bagian ini akan diulang saat menambah kategori baru -->
+                    <div class="mb-4" id="kategoriContainer"></div>
+
+                    <div class="flex items-center">
+                        <button type="button" id="tambahKategori" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">Tambah Kategori</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Simpan</button>
+                    </div>
+                </form>
                 <div class="mb-4">
                     <label for="thumbnail" class="text-gray-900">Thumbnail</label>
                     <input type="file" class="w-full mt-1 px-2 py-2 rounded-lg border" name="thumbnail" id="thumbnail">
@@ -80,6 +95,18 @@
                 var div = document.getElementById('fileinput_wrapper');
                 div.innerHTML += '<input class="w-full mt-1 px-2 py-2 rounded-lg border" type="file" name="gallery[]">';
             }
+            $(document).ready(function() {
+                let counter = 2; // Counter untuk nama kategori
+
+                $('#tambahKategori').click(function() {
+                    let newInput = `<div class="mb-4">
+                                        <label for="kategori" class="block text-gray-700 text-sm font-bold mb-2">Kategori ${counter}</label>
+                                        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="kategori[]" placeholder="Kategori ${counter}">
+                                    </div>`;
+                    $('#kategoriContainer').append(newInput);
+                    counter++;
+                });
+            });
         </script>
 
 

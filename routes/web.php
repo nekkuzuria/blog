@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\BukuController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Middleware\Admin;
 
 /*
@@ -31,6 +33,7 @@ Route::get('/about', function () {
 
 
 Route::get('/boom', [PostController::class, 'boomesport']);
+Route::post('/buku/{id}/add-review', [ReviewController::class, 'addReview'])->name('addReview');
 
 
 Route::middleware('auth')->group(function () {
@@ -44,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/buku/detail-buku/{id}/update-rating', [BukuController::class, 'updateRating'])->name('updateRating');
     Route::get('/buku/myfavourite', [BukuController::class, 'showFavoriteBooks'])->name('favorite');
     Route::post('/buku/{id}/add-to-favorites', [BukuController::class, 'addToFavorites'])->name('addToFavorites');
+    Route::get('/buku-populer', [BukuController::class, 'bukuPopuler'])->name('bukuPopuler');
+    
+    Route::get('/kategori/{kategori}', [BukuController::class, 'bukuByCategory'])->name('bukuByCategory');
+
+
 
 
     Route::middleware([Admin::class])->group(function () {
@@ -53,6 +61,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/buku/update/{id}', [BukuController::class, 'update'])->name('buku.update');
         Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
         Route::get('/delete-gallery/{id}', [BukuController::class, 'deleteGallery'])->name('galeri.delete');
+        Route::resource('kategori', KategoriController::class);
+
     });
 });
 

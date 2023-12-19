@@ -116,6 +116,32 @@
             </div>
             @endif
             <div class="mb-4">
+                <h4 class="text-2xl font-bold mb-2">Kategori</h4>
+                @foreach($categories as $kategori)
+                    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{ $kategori->nama_kategori }}</span>
+                @endforeach
+            </div>
+            <div class="mb-4">
+                <form action="{{ route('addReview', $buku->id) }}" method="POST">
+                    @csrf
+                    <label for="review" class="text-gray-900">Review</label>
+                    <textarea class="w-full mt-1 px-2 py-2 rounded-lg border" name="review" id="review"></textarea>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">Tambah Review</button>
+                </form>
+            </div>
+            <div class="mb-4">
+                <h4 class="text-2xl font-bold mb-2">Review Pengguna</h4>
+                @if($reviews->isNotEmpty())
+                    @foreach($reviews as $review)
+                        <div class="bg-gray-100 p-3 rounded-lg mb-2">
+                            <p>{{ $review->review }}</p>
+                        </div>
+                    @endforeach
+                @else
+                    <p>Belum ada review untuk buku ini.</p>
+                @endif
+            </div>
+            <div class="mb-4">
                 <label for="thumbnail" class="text-gray-900">Thumbnail</label>
                 <!-- You might display thumbnail here -->
                  <div class="flex flex-row space-x-4">

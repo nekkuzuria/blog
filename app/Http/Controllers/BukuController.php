@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\buku;
+use App\Models\Category;
 use Intervention\Image\Facades\Image;
 use App\Models\Gallery;
 use App\Models\Rating;
 use App\Models\Favorit;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
 class BukuController extends Controller
@@ -162,6 +164,15 @@ class BukuController extends Controller
             }
         }
 
+        if ($request->has('kategori')) {
+        foreach ($request->input('kategori') as $kategori) {
+            Category::create([
+                'nama_kategori' => $kategori,
+                'book_id' => $id,
+            ]);
+            }
+        }
+
         // Update the rest of the book details
         $buku->update([
             'judul' => $request->judul,
@@ -175,6 +186,7 @@ class BukuController extends Controller
         // Redirect with success message
         return redirect('/buku')->with('pesan_update', 'Data buku berhasil diperbarui');
     }
+    
 
 
     /**
@@ -200,9 +212,12 @@ class BukuController extends Controller
         $buku = Buku::find($id);
         $averageRating = Rating::where('book_id', $id)
             ->avg('rating');
+        // Mendapatkan review berdasarkan ID buku
+        $reviews = Review::where('book_id', $id)->get();
+        $categories = Category::where('book_id', $id)->get();
 
         // Mengembalikan tampilan bersama dengan rata-rata rating yang baru
-        return view('buku.detail', compact('buku', 'averageRating'));  
+        return view('buku.detail', compact('buku', 'averageRating', 'reviews', 'categories'));  
     }   
 
     public function updateRating(Request $request, $id)
@@ -262,5 +277,32 @@ class BukuController extends Controller
 
         return redirect()->route('galeri.buku', $id)->with('success', 'Buku berhasil ditambahkan ke daftar favorit.');
     }
+
+    public function bukuPopuler()
+{
+    // Ambil data rata-rata rating untuk setiap buku
+    $popularBooks = Rating::selectRaw('book_id, avg(rating) as average_rating')
+        ->groupBy('book_id')
+        ->orderByDesc('average_rating')
+        ->take(10)
+        ->get();
+
+    // Ambil informasi detail buku dari setiap buku populer
+    $books = [];
+    foreach ($popularBooks as $book) {
+        $bookDetail = Buku::find($book->book_id);
+        if ($bookDetail) {
+            $books[] = [
+                'judul' => $bookDetail->judul,
+                'penulis' => $bookDetail->penulis,
+                'rating' => number_format($book->average_rating, 1)
+            ];
+        }
+    }
+
+    return view('buku.populer', compact('books'));
+}
+
+
 }
 

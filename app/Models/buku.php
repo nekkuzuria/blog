@@ -26,4 +26,8 @@ class buku extends Model
     {
         return $this->belongsToMany(User::class, 'favorites', 'book_id', 'user_id');
     }
+
+    public function category() {
+        return $this->belongsToMany(Category::class, 'categories', 'book_id', 'category_id');
+    }
 }

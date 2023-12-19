@@ -20,6 +20,12 @@
                         {{ __('Buku Favoritku') }}
                     </x-nav-link>
                     @endif
+                    <x-nav-link :href="route('bukuPopuler')" :active="request()->routeIs('bukuPopuler')">
+                        {{ __('Buku Populer') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('bukuPopuler')" :active="request()->routeIs('bukuPopuler')">
+                        {{ __('Kategori Buku') }}
+                    </x-nav-link>
                 </div>
             </div>
 
